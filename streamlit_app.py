@@ -30,7 +30,7 @@ def get_fruityvice_data(chosen_fruit):
 
 streamlit.header("Fruityvice Fruit Advice!")
 try:
-    fruit_choice = streamlit.text_input('What fruit would you like information about?')
+    fruit_choice = streamlit.text_input("What fruit would you like information about?")
     if not fruit_choice:
         streamlit.error("Please select a fruit to get information.")
     else:
@@ -45,12 +45,18 @@ def get_fruit_load_list():
         my_cur.execute("SELECT * FROM fruit_load_list")
         return my_cur.fetchall()
 
+def insert_fruit(fruit):
+    with my_cnx.cursor() as my_cur:
+        my_cur.execute("insert into fruit_load_list values('from streamlit')")
+        return "Thanks for adding " + fruit
+
 if streamlit.button("Load fruit list"):
     my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
     my_data_list = get_fruit_load_list()
     streamlit.dataframe(my_data_list)
 
-
-#don't run anything from here
-streamlit.stop()
-my_cur.execute("insert into fruit_load_list values('from streamlit')")
+add_my_fruit = streamlit.text_input("What fruit would you like to add?")
+if streamlit.button('Add fruit'):
+    my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+    my_added_fruit_msg = insert_fruit(add_my_fruit)
+    streamlit.text(my_added_fruit_msg)
